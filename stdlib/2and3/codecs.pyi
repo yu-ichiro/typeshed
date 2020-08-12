@@ -1,13 +1,26 @@
 import sys
-from typing import Any, BinaryIO, Callable, Generator, IO, Iterable, Iterator, List, Optional, Protocol, Text, TextIO, Tuple, Type, TypeVar, Union, overload
-
-from abc import abstractmethod
 import types
-
-if sys.version_info < (3,) or sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
+from abc import abstractmethod
+from typing import (
+    IO,
+    Any,
+    BinaryIO,
+    Callable,
+    Generator,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Protocol,
+    Text,
+    TextIO,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+    overload,
+)
+from typing_extensions import Literal
 
 # TODO: this only satisfies the most common interface, where
 # bytes (py2 str) is the raw form and str (py2 unicode) is the cooked form.
@@ -20,16 +33,19 @@ _Encoded = bytes
 
 class _Encoder(Protocol):
     def __call__(self, input: _Decoded, errors: str = ...) -> Tuple[_Encoded, int]: ...  # signature of Codec().encode
+
 class _Decoder(Protocol):
     def __call__(self, input: _Encoded, errors: str = ...) -> Tuple[_Decoded, int]: ...  # signature of Codec().decode
 
 class _StreamReader(Protocol):
     def __call__(self, stream: IO[_Encoded], errors: str = ...) -> StreamReader: ...
+
 class _StreamWriter(Protocol):
     def __call__(self, stream: IO[_Encoded], errors: str = ...) -> StreamWriter: ...
 
 class _IncrementalEncoder(Protocol):
     def __call__(self, errors: str = ...) -> IncrementalEncoder: ...
+
 class _IncrementalDecoder(Protocol):
     def __call__(self, errors: str = ...) -> IncrementalDecoder: ...
 
@@ -59,14 +75,12 @@ def encode(obj: bytes, encoding: _BytesToBytesEncodingT, errors: str = ...) -> b
 def encode(obj: str, encoding: Literal["rot13", "rot_13"] = ..., errors: str = ...) -> str: ...  # type: ignore
 @overload
 def encode(obj: _Decoded, encoding: str = ..., errors: str = ...) -> _Encoded: ...
-
 @overload
 def decode(obj: bytes, encoding: _BytesToBytesEncodingT, errors: str = ...) -> bytes: ...  # type: ignore
 @overload
 def decode(obj: str, encoding: Literal["rot13", "rot_13"] = ..., errors: str = ...) -> Text: ...
 @overload
 def decode(obj: _Encoded, encoding: str = ..., errors: str = ...) -> _Decoded: ...
-
 def lookup(encoding: str) -> CodecInfo: ...
 def utf_16_be_decode(__obj: _Encoded, __errors: str = ..., __final: bool = ...) -> Tuple[_Decoded, int]: ...  # undocumented
 def utf_16_be_encode(__obj: _Decoded, __errors: str = ...) -> Tuple[_Encoded, int]: ...  # undocumented

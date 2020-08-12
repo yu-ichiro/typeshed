@@ -1,7 +1,5 @@
-# Stubs for termios
-
-from typing import IO, List, Union
-from _types import FileDescriptorLike
+from _typeshed import FileDescriptorLike
+from typing import List, Union
 
 _Attr = List[Union[int, List[bytes]]]
 

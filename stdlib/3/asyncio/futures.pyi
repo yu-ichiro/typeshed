@@ -1,21 +1,18 @@
 import sys
-from typing import Any, Union, Callable, TypeVar, Type, List, Iterable, Generator, Awaitable, Optional, Tuple
+from concurrent.futures._base import Error, Future as _ConcurrentFuture
+from typing import Any, Awaitable, Callable, Generator, Iterable, List, Optional, Tuple, Type, TypeVar, Union
+
 from .events import AbstractEventLoop
-from concurrent.futures import (
-    Future as _ConcurrentFuture,
-    Error,
-)
 
 if sys.version_info < (3, 8):
-    from concurrent.futures import CancelledError as CancelledError
-    from concurrent.futures import TimeoutError as TimeoutError
+    from concurrent.futures import CancelledError as CancelledError, TimeoutError as TimeoutError
     class InvalidStateError(Error): ...
 
 if sys.version_info >= (3, 7):
     from contextvars import Context
 
-_T = TypeVar('_T')
-_S = TypeVar('_S')
+_T = TypeVar("_T")
+_S = TypeVar("_S")
 
 if sys.version_info < (3, 7):
     class _TracebackLogger:
@@ -46,7 +43,10 @@ class Future(Awaitable[_T], Iterable[_T]):
         @property
         def _callbacks(self: _S) -> List[Callable[[_S], Any]]: ...
         def add_done_callback(self: _S, __fn: Callable[[_S], Any]) -> None: ...
-    def cancel(self) -> bool: ...
+    if sys.version_info >= (3, 9):
+        def cancel(self, msg: Optional[str] = ...) -> bool: ...
+    else:
+        def cancel(self) -> bool: ...
     def cancelled(self) -> bool: ...
     def done(self) -> bool: ...
     def result(self) -> _T: ...
